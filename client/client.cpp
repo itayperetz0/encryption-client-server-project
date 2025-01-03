@@ -1,4 +1,3 @@
-// Created by: Itay peretz ID: 207007329
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -610,7 +609,7 @@ int main(int argc, char* argv[])
         reconnect_res =  client.reconnect();
     }
 
-    // If it's a new registration or reconnection failed, senf public key
+    // If it's a new registration or reconnection failed, send public key
     if(reconnect_res == 1606 || reconnect_res == NEW_REGISTER)
     {
         request = "1026";
