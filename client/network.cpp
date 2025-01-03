@@ -24,9 +24,6 @@
 
 
 
-
-
-
 Network::Network() {
 	this->header.version = CLIENT_VER;
 }
@@ -48,7 +45,6 @@ bool Network::connect_to_server(int port, std::string ip_address) {
 	}
 
 	// Server address
-
 	sockaddr_in serverAddr;
 	serverAddr.sin_family = AF_INET;
 	serverAddr.sin_addr.s_addr = inet_addr((ip_address).c_str());
@@ -66,15 +62,11 @@ bool Network::connect_to_server(int port, std::string ip_address) {
 
 //this function end the communication with the server
 bool Network::end_communication() {
-
-
 	if (!(closesocket(this->client_socket) == SOCKET_ERROR)) {
 		WSACleanup();
 		return true;
 	}
 	return false;
-
-
 }
 
 //this function pad the string to 255 bytes
