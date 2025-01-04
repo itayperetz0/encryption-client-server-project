@@ -112,17 +112,13 @@ A secure client-server application for transferring files with encryption and in
 ## Project Structure
 ```
 ├── server/
-│   ├── server.cpp
-│   ├── network.cpp
+│   ├── server.py
+│   ├── network.py
 │   └── port.info
 ├── client/
 │   ├── client.cpp
 │   ├── network.cpp
 │   └── transfer.info
-├── common/
-│   ├── encrypt.hpp
-│   ├── RSAWrapper.h
-│   └── network.hpp
 └── README.md
 ```
 
