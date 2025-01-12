@@ -91,7 +91,7 @@ class Server:
                 return client
         return None
     
-    def handle_1602_and_1605(self, client_socket, client,res_num):
+    def create_aes_key_for_client(self, client_socket, client,res_num):
         aes_key = self.key_generator.generate_AES_key()
         client['AES Key'] = aes_key
         base64_data = base64.b64encode(aes_key)
@@ -125,8 +125,7 @@ class Server:
             client_socket.sendall(self.net_protocol.res_1607(client['UUID']))
             return False 
 
-    def handle_client_requests(self, client_socket, client_address,clients): 
-        self.clients = clients
+    def handle_client_requests(self, client_socket, client_address): 
         try:
             while True:
                 # Receive the header of a request
@@ -161,7 +160,7 @@ class Server:
                         client_public_key = base64.b64encode(client_public_key)
                         client_public_key = client_public_key.decode('utf-8')
                         print(f"User {client_name} sent a public key: {client_public_key}")
-                        self.handle_1602_and_1605(client_socket, client,1602)
+                        self.create_aes_key_for_client(client_socket, client,1602)
                     else:
                         header, payload = self.net_protocol.res_1601()
                         client_socket.sendall(header)
@@ -183,7 +182,7 @@ class Server:
                         print(f"Client UUID: {binascii.hexlify(costumer_uuid).decode('utf-8')}")
                     else:
                         print('user found - sending AES key for files encryption')
-                        self.handle_1602_and_1605(client_socket, client,1605)
+                        self.create_aes_key_for_client(client_socket, client,1605)
                     
                 if code == 1028:   
                     client = self.find_client_by_uuid(client_id)
@@ -300,17 +299,21 @@ def main():
         sys.exit()
     
     try:
-        clients = []
+        client_threads = []
         while True:
             # Accept a connection from a client
             client_socket, client_address = server_socket.accept()
             # Start a new thread to handle the client
-            client_thread = threading.Thread(target=server.handle_client_requests, args=(client_socket, client_address,clients))
+            client_thread = threading.Thread(target=server.handle_client_requests, args=(client_socket, client_address))
             client_thread.start()
+            client_threads.append(client_thread)
         
     except BaseException:
         print("Server shutting down.")
     finally:
+        for client in client_threads:
+            client.join()
+        save_clients_in_db(clients)
         print("Server shutting down.")
 
 
